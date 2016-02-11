@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  PhotosViewController.swift
 //  Instagram
 //
 //  Created by Daniel Moreh on 2/10/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class PhotosViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
