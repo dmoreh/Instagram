@@ -7,10 +7,13 @@
 //
 
 import UIKit
+import AFNetworking
 
-class PhotosViewController: UIViewController {
+class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
-    var photosDictionary: NSDictionary?
+    @IBOutlet weak var photosTableView: UITableView!
+
+    var photosArray: NSArray?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,13 +32,32 @@ class PhotosViewController: UIViewController {
                     if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
                         data, options:[]) as? NSDictionary {
                             NSLog("response: \(responseDictionary)")
-                            self.photosDictionary = responseDictionary
+                            self.photosArray = responseDictionary["data"] as? NSArray
+                            self.photosTableView.reloadData()
                     }
                 }
         });
         task.resume()
 
+        self.photosTableView.delegate = self
+        self.photosTableView.dataSource = self
+        self.photosTableView.rowHeight = 320
+    }
+
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("PhotoCell", forIndexPath: indexPath) as! PhotoTableViewCell
+        let imageURL = photosArray![indexPath.row].valueForKeyPath("images.standard_resolution.url") as! String
+        cell.photoImageView.setImageWithURL(NSURL(string: imageURL)!)
+
+        return cell
+    }
+
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let photosArray = self.photosArray else {
+            return 0
+        }
+
+        return photosArray.count
     }
 
 }
-
