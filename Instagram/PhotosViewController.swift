@@ -44,6 +44,12 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
         self.photosTableView.rowHeight = 320
     }
 
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        let vc = segue.destinationViewController as! PhotoDetailsViewController
+        let indexPath = self.photosTableView.indexPathForCell(sender as! UITableViewCell)
+        vc.imageURL = self.photosArray![indexPath!.row].valueForKeyPath("images.standard_resolution.url") as? String
+    }
+
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("PhotoCell", forIndexPath: indexPath) as! PhotoTableViewCell
         let imageURL = photosArray![indexPath.row].valueForKeyPath("images.standard_resolution.url") as! String
@@ -58,6 +64,10 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
         }
 
         return photosArray.count
+    }
+
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
 
 }
