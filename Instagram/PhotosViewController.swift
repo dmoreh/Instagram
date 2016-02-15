@@ -17,6 +17,20 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+
+        self.photosTableView.delegate = self
+        self.photosTableView.dataSource = self
+        self.photosTableView.rowHeight = 320
+
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: "refreshControlAction:", forControlEvents: .ValueChanged)
+        self.photosTableView.insertSubview(refreshControl, atIndex: 0)
+
+        self.refreshControlAction(refreshControl)
+    }
+
+    func refreshControlAction(refreshControl: UIRefreshControl) {
         let clientId = "e05c462ebd86446ea48a5af73769b602"
         let url = NSURL(string:"https://api.instagram.com/v1/media/popular?client_id=\(clientId)")
         let request = NSURLRequest(URL: url!)
@@ -35,13 +49,10 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
                             self.photosArray = responseDictionary["data"] as? NSArray
                             self.photosTableView.reloadData()
                     }
+                    refreshControl.endRefreshing()
                 }
         });
         task.resume()
-
-        self.photosTableView.delegate = self
-        self.photosTableView.dataSource = self
-        self.photosTableView.rowHeight = 320
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
